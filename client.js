@@ -586,6 +586,8 @@ window.__ModuleLoader__.load({
 .sb-input-row .sb-input{flex:1;min-width:0}
 .sb-field-error{font-size:10.5px;line-height:1.5;color:var(--dsw-alias-state-error-primary)}
 .sb-input,.sb-textarea{width:100%;box-sizing:border-box;padding:7px 9px;border-radius:7px;border:1px solid var(--dsw-alias-border-l2);background:var(--dsw-alias-bg-layer-2);color:var(--dsw-alias-label-primary);font:inherit;font-size:12.5px;outline:none;line-height:1.5}
+.sb-input{height:35px}
+.sb-btn-field{height:35px;padding:0 12px;border-radius:7px;font-size:12.5px}
 .sb-input:focus,.sb-textarea:focus{border-color:var(--dsw-alias-border-l4)}
 .sb-textarea{min-height:56px;resize:vertical}
 .sb-input::placeholder,.sb-textarea::placeholder{color:var(--dsw-alias-label-tertiary)}
@@ -1860,6 +1862,7 @@ a.sb-code-row:hover{color:var(--dsw-alias-brand-primary)}
 								}),
 								h(Button, {
 									size: 'sm',
+									className: 'sb-btn-field',
 									onClick: () => { void choosePath(); },
 									disabled: picking === true
 								}, picking === true ? t('product.choosing') : t('product.choosePath'))),
