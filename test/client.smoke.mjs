@@ -91,6 +91,7 @@ test('client panel mounts, switches tabs, and opens a story', { skip: skipReason
 
 
 	let lastCommand = null;
+	let pickCalls = 0;
 	window.fetch = async (url, options) => {
 		const path = String(url);
 		if (path.includes('api/story-board/state')) {
@@ -101,17 +102,9 @@ test('client panel mounts, switches tabs, and opens a story', { skip: skipReason
 			lastCommand = JSON.parse(options.body ?? '{}');
 			return new Response(JSON.stringify({ ok: true, value: { product: {} }, warnings: [] }), { headers: { 'content-type': 'application/json' } });
 		}
-		if (path.includes('api/story-board/directory')) {
-			return new Response(JSON.stringify({
-				ok: true,
-				value: {
-					path: '/Users/tester',
-					home: '/Users/tester',
-					crumbs: [{ name: '/', path: '/' }, { name: 'Users', path: '/Users' }, { name: 'tester', path: '/Users/tester' }],
-					entries: [{ name: 'code', path: '/Users/tester/code', hidden: false }, { name: '.ssh', path: '/Users/tester/.ssh', hidden: true }],
-					truncated: false
-				}
-			}), { headers: { 'content-type': 'application/json' } });
+		if (path.includes('api/story-board/pick-directory')) {
+			pickCalls += 1;
+			return new Response(JSON.stringify({ ok: true, value: { path: pickCalls === 1 ? '/Users/tester/code' : null } }), { headers: { 'content-type': 'application/json' } });
 		}
 		throw new Error(`unexpected fetch: ${path}`);
 	};
@@ -184,19 +177,14 @@ test('client panel mounts, switches tabs, and opens a story', { skip: skipReason
 	assert.ok(pathInput, 'local path input exists');
 
 	const chooseButton = [...document.querySelectorAll('.sb-modal button')].find((button) => button.textContent.trim() === '选择…');
-	assert.ok(chooseButton, 'directory picker trigger exists');
+	assert.ok(chooseButton, 'system folder picker trigger exists');
 	chooseButton.click();
-	await new Promise((resolve) => setTimeout(resolve, 60));
-	assert.match(text(), /Users\/tester/);
-	assert.match(text(), /code/);
-	assert.equal(document.querySelectorAll('.sb-dir-row').length, 1, 'hidden folders stay hidden');
+	await new Promise((resolve) => setTimeout(resolve, 80));
+	assert.equal(pathInput.value, '/Users/tester/code');
 
-	document.querySelector('.sb-dir-row').click();
-	await new Promise((resolve) => setTimeout(resolve, 20));
-	const useButton = [...document.querySelectorAll('.sb-modal button')].find((button) => button.textContent.trim() === '使用此目录');
-	assert.ok(useButton, 'use-folder button exists');
-	useButton.click();
-	await new Promise((resolve) => setTimeout(resolve, 60));
+	// Cancelling the native chooser leaves the path untouched.
+	chooseButton.click();
+	await new Promise((resolve) => setTimeout(resolve, 80));
 	assert.equal(pathInput.value, '/Users/tester/code');
 
 	const saveButton = [...document.querySelectorAll('.sb-modal button')].find((button) => button.textContent.trim() === '保存');

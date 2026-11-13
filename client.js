@@ -158,20 +158,11 @@ window.__ModuleLoader__.load({
 				'product.repoHint': '支持 owner/repo 简写；保存时归一化为仓库地址',
 				'product.localPath': '本地项目路径',
 				'product.localPathPlaceholder': '/Users/you/code/project',
-				'product.localPathHint': '产品对应的本地项目根目录，可直接输入或从目录中选择',
+				'product.localPathHint': '产品对应的本地项目根目录；可直接输入，或点击「选择…」调用系统目录选择器',
 				'product.choosePath': '选择…',
+				'product.choosing': '选择中…',
+				'product.pickerUnavailable': '当前环境没有系统目录选择器，请直接输入本地路径',
 				'product.codeEmpty': '未关联代码仓库或本地路径',
-				'picker.title': '选择项目目录',
-				'picker.hint': '单击选择文件夹，双击进入。',
-				'picker.up': '上级',
-				'picker.pathPlaceholder': '输入目录路径，回车跳转',
-				'picker.go': '跳转',
-				'picker.empty': '这个目录下没有子文件夹',
-				'picker.hidden': '显示隐藏文件夹',
-				'picker.use': '使用此目录',
-				'picker.selected': '已选择',
-				'picker.loading': '正在读取目录…',
-				'picker.retry': '重新加载',
 				'project.newTitle': '新建项目',
 				'project.editTitle': '编辑项目',
 				'project.name': '项目名称',
@@ -405,20 +396,11 @@ window.__ModuleLoader__.load({
 				'product.repoHint': 'owner/repo shorthand is accepted and normalized to a repository URL',
 				'product.localPath': 'Local project path',
 				'product.localPathPlaceholder': '/Users/you/code/project',
-				'product.localPathHint': 'Local project root for this product; type it or pick a folder',
+				'product.localPathHint': 'Local project root for this product; type it or use Choose… to open the system folder picker',
 				'product.choosePath': 'Choose…',
+				'product.choosing': 'Choosing…',
+				'product.pickerUnavailable': 'This environment has no system folder picker; type the path directly',
 				'product.codeEmpty': 'No repository or local path linked',
-				'picker.title': 'Choose project folder',
-				'picker.hint': 'Click to select a folder; double-click to open it.',
-				'picker.up': 'Up',
-				'picker.pathPlaceholder': 'Type a folder path and press Enter',
-				'picker.go': 'Go',
-				'picker.empty': 'No subfolders here',
-				'picker.hidden': 'Show hidden folders',
-				'picker.use': 'Use this folder',
-				'picker.selected': 'Selected',
-				'picker.loading': 'Reading folder…',
-				'picker.retry': 'Reload',
 				'project.newTitle': 'New project',
 				'project.editTitle': 'Edit project',
 				'project.name': 'Project name',
@@ -602,25 +584,7 @@ window.__ModuleLoader__.load({
 .sb-field-hint{font-size:10.5px;color:var(--dsw-alias-label-tertiary);line-height:1.5}
 .sb-input-row{display:flex;align-items:center;gap:6px;min-width:0}
 .sb-input-row .sb-input{flex:1;min-width:0}
-.sb-dir{margin-top:7px;border:1px solid var(--dsw-alias-border-l1);border-radius:9px;background:var(--dsw-alias-bg-layer-1);overflow:hidden}
-.sb-dir-bar{display:flex;align-items:center;gap:6px;padding:7px 8px;border-bottom:1px solid var(--dsw-alias-border-l1)}
-.sb-dir-bar .sb-input{flex:1;min-width:0}
-.sb-dir-crumbs{display:flex;align-items:center;gap:1px;padding:6px 9px;border-bottom:1px solid var(--dsw-alias-border-l1);overflow-x:auto;white-space:nowrap;font-size:11px;scrollbar-width:none}
-.sb-crumb{border:0;background:transparent;padding:2px 3px;border-radius:4px;color:var(--dsw-alias-label-secondary);font:inherit;font-size:11px;cursor:pointer;max-width:140px;overflow:hidden;text-overflow:ellipsis}
-.sb-crumb:hover{color:var(--dsw-alias-label-primary);background:var(--dsw-alias-bg-layer-2)}
-.sb-dir-hint{padding:6px 9px 2px;font-size:10.5px;color:var(--dsw-alias-label-tertiary)}
-.sb-dir-list{max-height:190px;overflow-y:auto;padding:4px}
-.sb-dir-row{display:flex;align-items:center;gap:7px;width:100%;box-sizing:border-box;padding:5px 7px;border:0;border-radius:5px;background:transparent;color:var(--dsw-alias-label-primary);font:inherit;font-size:12px;text-align:left;cursor:pointer}
-.sb-dir-row:hover{background:var(--dsw-alias-bg-layer-2)}
-.sb-dir-row-selected{background:var(--dsw-alias-bg-layer-2);box-shadow:inset 0 0 0 1px var(--dsw-alias-border-l3)}
-.sb-dir-row svg{flex:none;color:var(--dsw-alias-label-tertiary)}
-.sb-dir-name{font-weight:550;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.sb-dir-path{margin-left:auto;max-width:52%;font-size:10.5px;color:var(--dsw-alias-label-tertiary);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.sb-dir-empty{padding:18px 10px;text-align:center;font-size:11.5px;color:var(--dsw-alias-label-tertiary)}
-.sb-dir-error{display:flex;align-items:center;gap:7px;margin:6px 8px;padding:6px 8px;border-radius:6px;background:var(--dsw-alias-bg-layer-2);color:var(--dsw-alias-state-error-primary);font-size:11px}
-.sb-dir-foot{display:flex;align-items:center;gap:7px;padding:7px 8px;border-top:1px solid var(--dsw-alias-border-l1);flex-wrap:wrap}
-.sb-dir-toggle{display:flex;align-items:center;gap:5px;font-size:10.5px;color:var(--dsw-alias-label-secondary);cursor:pointer;white-space:nowrap}
-.sb-dir-current{flex:1;min-width:80px;font-size:10.5px;color:var(--dsw-alias-label-tertiary);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sb-field-error{font-size:10.5px;line-height:1.5;color:var(--dsw-alias-state-error-primary)}
 .sb-input,.sb-textarea{width:100%;box-sizing:border-box;padding:7px 9px;border-radius:7px;border:1px solid var(--dsw-alias-border-l2);background:var(--dsw-alias-bg-layer-2);color:var(--dsw-alias-label-primary);font:inherit;font-size:12.5px;outline:none;line-height:1.5}
 .sb-input:focus,.sb-textarea:focus{border-color:var(--dsw-alias-border-l4)}
 .sb-textarea{min-height:56px;resize:vertical}
@@ -802,7 +766,9 @@ a.sb-code-row:hover{color:var(--dsw-alias-brand-primary)}
 			if (response.ok !== true) throw new Error(`HTTP ${String(response.status)}`);
 			const data = await response.json();
 			if (data === null || typeof data !== 'object' || data.ok !== true) {
-				throw new Error(data?.error?.message ?? 'story board request failed');
+				const error = new Error(data?.error?.message ?? 'story board request failed');
+				if (typeof data?.error?.code === 'string') error.code = data.error.code;
+				throw error;
 			}
 			return data;
 		}
@@ -810,7 +776,7 @@ a.sb-code-row:hover{color:var(--dsw-alias-brand-primary)}
 		const api = {
 			state: async () => (await post('state', {})).value,
 			command: async (body) => post('command', body),
-			listDirectory: async (path) => (await post('directory', { path })).value
+			pickDirectory: async () => (await post('pick-directory', {})).value
 		};
 
 		/* ------------------------------------------------------------------ */
@@ -1817,122 +1783,6 @@ a.sb-code-row:hover{color:var(--dsw-alias-brand-primary)}
 		/* Dialogs: product / project / board                                 */
 		/* ------------------------------------------------------------------ */
 
-		/**
-		 * Inline folder browser for the product form. One level at a time, with
-		 * breadcrumbs and an editable path: click a folder to select it, double
-		 * click to enter it, or type a path and press Enter. The path returned by
-		 * the Host is always absolute, which is what the product record stores.
-		 */
-		function DirectoryBrowser({ initialPath, onPick, onClose, t }) {
-			const [listing, setListing] = useState(null);
-			const [loading, setLoading] = useState(true);
-			const [error, setError] = useState('');
-			const [draft, setDraft] = useState(typeof initialPath === 'string' ? initialPath : '');
-			const [selected, setSelected] = useState('');
-			const [showHidden, setShowHidden] = useState(false);
-			const alive = useRef(true);
-
-			const load = useCallback(async (path) => {
-				setLoading(true);
-				setError('');
-				try {
-					const value = await api.listDirectory(typeof path === 'string' ? path : '');
-					if (alive.current !== true) return;
-					setListing(value);
-					setDraft(value.path);
-					setSelected('');
-				} catch (cause) {
-					if (alive.current !== true) return;
-					setError(String(cause?.message ?? cause));
-				} finally {
-					if (alive.current === true) setLoading(false);
-				}
-			}, []);
-
-			useEffect(() => {
-				alive.current = true;
-				void load(typeof initialPath === 'string' ? initialPath : '');
-				return () => {
-					alive.current = false;
-				};
-			}, [load, initialPath]);
-
-			const crumbs = listing?.crumbs ?? [];
-			const parent = crumbs.length > 1 ? crumbs[crumbs.length - 2].path : undefined;
-			const entries = (listing?.entries ?? []).filter((entry) => showHidden === true || entry.hidden !== true);
-			const chosen = selected !== '' ? selected : listing?.path ?? '';
-
-			return h('div', { className: 'sb-dir' },
-				h('div', { className: 'sb-dir-bar' },
-					h(Button, {
-						variant: 'ghost',
-						size: 'sm',
-						icon: Icon.up(12),
-						onClick: () => { if (parent !== undefined) void load(parent); },
-						disabled: parent === undefined,
-						title: t('picker.up'),
-						ariaLabel: t('picker.up')
-					}),
-					h('input', {
-						className: 'sb-input',
-						value: draft,
-						placeholder: t('picker.pathPlaceholder'),
-						onChange: (event) => setDraft(event.target.value),
-						onKeyDown: (event) => {
-							if (event.key !== 'Enter') return;
-							event.preventDefault();
-							void load(draft);
-						}
-					}),
-					h(Button, { size: 'sm', onClick: () => { void load(draft); }, disabled: loading === true }, t('picker.go'))),
-				crumbs.length === 0 ? undefined : h('div', { className: 'sb-dir-crumbs' }, crumbs.map((crumb, index) => h(React.Fragment, { key: crumb.path },
-					index === 0 ? undefined : Icon.right(9),
-					h('button', {
-						type: 'button',
-						className: 'sb-crumb',
-						title: crumb.path,
-						onClick: () => { void load(crumb.path); }
-					}, index === 0 ? '/' : crumb.name)))),
-				h('div', { className: 'sb-dir-hint' }, t('picker.hint')),
-				error !== '' ? h('div', { className: 'sb-dir-error', role: 'alert' },
-					Icon.alert(12),
-					h('span', { style: { flex: 1, minWidth: 0 } }, error),
-					h(Button, { size: 'sm', onClick: () => { void load(draft); } }, t('picker.retry'))) : undefined,
-				loading === true
-					? h('div', { className: 'sb-dir-empty' }, t('picker.loading'))
-					: error !== ''
-						? undefined
-						: entries.length === 0
-							? h('div', { className: 'sb-dir-empty' }, t('picker.empty'))
-							: h('div', { className: 'sb-dir-list', role: 'listbox', 'aria-label': t('picker.title') },
-								entries.map((entry) => h('button', {
-									key: entry.path,
-									type: 'button',
-									role: 'option',
-									'aria-selected': selected === entry.path,
-									className: `sb-dir-row${selected === entry.path ? ' sb-dir-row-selected' : ''}`,
-									title: entry.path,
-									onClick: () => setSelected(entry.path),
-									onDoubleClick: () => { void load(entry.path); }
-								}, Icon.folder(13), h('span', { className: 'sb-dir-name' }, entry.name), h('span', { className: 'sb-dir-path' }, entry.path)))),
-				h('div', { className: 'sb-dir-foot' },
-					h('label', { className: 'sb-dir-toggle' },
-						h('input', {
-							type: 'checkbox',
-							checked: showHidden,
-							onChange: (event) => setShowHidden(event.target.checked)
-						}),
-						h('span', null, t('picker.hidden'))),
-					h('span', { className: 'sb-dir-current', title: chosen }, selected !== '' ? `${t('picker.selected')}: ${selected}` : chosen),
-					h(Button, { size: 'sm', onClick: onClose }, t('common.cancel')),
-					h(Button, {
-						variant: 'primary',
-						size: 'sm',
-						disabled: listing === null || loading === true || chosen === '',
-						onClick: () => { if (chosen !== '') onPick(chosen); }
-					}, t('picker.use'))));
-		}
-
 		function ProductDialog({ product, onClose, onSubmit, busy, t }) {
 			const [name, setName] = useState(product?.name ?? '');
 			const [key, setKey] = useState(product?.key ?? '');
@@ -1940,8 +1790,25 @@ a.sb-code-row:hover{color:var(--dsw-alias-brand-primary)}
 			const [color, setColor] = useState(product?.color ?? 'blue');
 			const [repoUrl, setRepoUrl] = useState(product?.repoUrl ?? '');
 			const [localPath, setLocalPath] = useState(product?.localPath ?? '');
-			const [browsing, setBrowsing] = useState(false);
+			const [picking, setPicking] = useState(false);
+			const [pickError, setPickError] = useState('');
 			const valid = name.trim() !== '';
+
+			/** Delegate folder picking to the Host's native OS chooser. */
+			const choosePath = async () => {
+				if (picking === true) return;
+				setPicking(true);
+				setPickError('');
+				try {
+					const value = await api.pickDirectory();
+					if (typeof value?.path === 'string' && value.path !== '') setLocalPath(value.path);
+				} catch (cause) {
+					setPickError(cause?.code === 'native_picker_unavailable' ? t('product.pickerUnavailable') : String(cause?.message ?? cause));
+				} finally {
+					setPicking(false);
+				}
+			};
+
 			const submit = () => {
 				if (valid !== true || busy === true) return;
 				void onSubmit({
@@ -1993,19 +1860,11 @@ a.sb-code-row:hover{color:var(--dsw-alias-brand-primary)}
 								}),
 								h(Button, {
 									size: 'sm',
-									variant: browsing === true ? 'primary' : undefined,
-									onClick: () => setBrowsing((value) => value !== true)
-								}, t('product.choosePath'))),
+									onClick: () => { void choosePath(); },
+									disabled: picking === true
+								}, picking === true ? t('product.choosing') : t('product.choosePath'))),
 							h('span', { className: 'sb-field-hint' }, t('product.localPathHint')),
-							browsing === true ? h(DirectoryBrowser, {
-								initialPath: localPath,
-								onPick: (path) => {
-									setLocalPath(path);
-									setBrowsing(false);
-								},
-								onClose: () => setBrowsing(false),
-								t
-							}) : undefined))));
+							pickError === '' ? undefined : h('span', { className: 'sb-field-error' }, pickError)))));
 		}
 
 		function ProjectDialog({ project, products, defaultProductId, onClose, onSubmit, busy, t }) {

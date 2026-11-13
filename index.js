@@ -16,7 +16,6 @@ import { readFile } from 'node:fs/promises';
 import { homedir } from 'node:os';
 import { isAbsolute, join, resolve } from 'node:path';
 
-import { listDirectory } from './browse.js';
 import { PRIORITIES, STATUSES, StoryBoardStore } from './store.js';
 
 /** Cordis plugin id and the loader row id in cordis.patch.yml. */
@@ -374,6 +373,22 @@ function toolsOf(ctx, store) {
 	];
 }
 
+/**
+ * The harness's directory-picker seam, resolved to its native capability.
+ * The product form delegates folder picking to the host OS chooser instead of
+ * shipping a file browser; only a `native` seam can open that chooser.
+ */
+export function nativePickerOf(ctx) {
+	try {
+		const seam = ctx.get('directoryPicker');
+		const capability = typeof seam?.capability === 'function' ? seam.capability() : undefined;
+		if (capability?.kind === 'native' && typeof capability.pick === 'function') return capability;
+	} catch {
+		// The seam is optional: a host without a picker simply cannot pick.
+	}
+	return undefined;
+}
+
 /** JSON response helper for the panel's routes. */
 function jsonResponse(value) {
 	return Response.json(value, { headers: { 'cache-control': 'no-store' } });
@@ -426,10 +441,20 @@ export function apply(ctx) {
 			}
 		});
 
-		register('/api/story-board/directory', async (request) => {
+		register('/api/story-board/pick-directory', async (request) => {
 			try {
-				const body = await readBody(request);
-				return jsonResponse({ ok: true, value: await listDirectory(body.path) });
+				const picker = nativePickerOf(ctx);
+				if (picker === undefined) {
+					return jsonResponse({
+						ok: false,
+						error: {
+							code: 'native_picker_unavailable',
+							message: '当前环境没有系统目录选择器，请直接输入本地路径'
+						}
+					});
+				}
+				const path = await picker.pick(request.signal);
+				return jsonResponse({ ok: true, value: { path: typeof path === 'string' && path !== '' ? path : null } });
 			} catch (error) {
 				return jsonResponse(failureOf(error));
 			}

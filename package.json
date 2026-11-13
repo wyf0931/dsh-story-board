@@ -24,7 +24,6 @@
   "files": [
     "index.js",
     "store.js",
-    "browse.js",
     "client.js",
     "cordis.patch.yml",
     "locale/*.json",
@@ -35,8 +34,8 @@
     "LICENSE"
   ],
   "scripts": {
-    "test": "node --test test/store.test.mjs test/browse.test.mjs test/client.smoke.mjs",
-    "check": "node --check index.js && node --check store.js && node --check browse.js && node --check client.js && node --test test/store.test.mjs test/browse.test.mjs test/client.smoke.mjs"
+    "test": "node --test test/store.test.mjs test/host.test.mjs test/client.smoke.mjs",
+    "check": "node --check index.js && node --check store.js && node --check client.js && node --test test/store.test.mjs test/host.test.mjs test/client.smoke.mjs"
   },
   "dsh": {
     "bundle": {
