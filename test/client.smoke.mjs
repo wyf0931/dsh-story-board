@@ -40,6 +40,11 @@ if (hasSibling) {
 function demoSnapshot() {
 	const state = emptyState();
 	mutate(state, 'seed_demo', {}, { clock: () => '2026-11-13T08:00:00.000Z' });
+	mutate(state, 'update_product', {
+		id: state.products[0].id,
+		repoUrl: 'https://github.com/wyf0931/dsh-story-board',
+		localPath: '/Users/scott/Documents/dsh-workspace/dsh-story-board'
+	}, { clock: () => '2026-11-13T08:00:00.000Z' });
 	return {
 		...structuredClone(state),
 		meta: {
@@ -62,6 +67,11 @@ test('client panel mounts, switches tabs, and opens a story', { skip: skipReason
 	global.Event = window.Event;
 	global.MouseEvent = window.MouseEvent;
 	global.getComputedStyle = window.getComputedStyle.bind(window);
+	// React 18's legacy input-event polyfill probes these on the active element;
+	// jsdom has neither, and the probe throws for every focused field.
+	for (const name of ['attachEvent', 'detachEvent']) {
+		if (typeof window.HTMLElement.prototype[name] !== 'function') window.HTMLElement.prototype[name] = () => {};
+	}
 
 	let plugin;
 	let mainComponent;
@@ -80,10 +90,23 @@ test('client panel mounts, switches tabs, and opens a story', { skip: skipReason
 	};
 
 
+	let lastCommand = null;
+	let pickCalls = 0;
 	window.fetch = async (url, options) => {
-		assert.match(String(url), /api\/story-board\/state/);
-		assert.equal(JSON.parse(options.body ?? '{}')?.action, undefined);
-		return new Response(JSON.stringify({ ok: true, value: demoSnapshot() }), { headers: { 'content-type': 'application/json' } });
+		const path = String(url);
+		if (path.includes('api/story-board/state')) {
+			assert.equal(JSON.parse(options.body ?? '{}')?.action, undefined);
+			return new Response(JSON.stringify({ ok: true, value: demoSnapshot() }), { headers: { 'content-type': 'application/json' } });
+		}
+		if (path.includes('api/story-board/command')) {
+			lastCommand = JSON.parse(options.body ?? '{}');
+			return new Response(JSON.stringify({ ok: true, value: { product: {} }, warnings: [] }), { headers: { 'content-type': 'application/json' } });
+		}
+		if (path.includes('api/story-board/pick-directory')) {
+			pickCalls += 1;
+			return new Response(JSON.stringify({ ok: true, value: { path: pickCalls === 1 ? '/Users/tester/code' : null } }), { headers: { 'content-type': 'application/json' } });
+		}
+		throw new Error(`unexpected fetch: ${path}`);
 	};
 	global.fetch = window.fetch;
 
@@ -130,6 +153,47 @@ test('client panel mounts, switches tabs, and opens a story', { skip: skipReason
 	assert.match(text(), /概览/);
 	assert.match(text(), /US-06/);
 	assert.match(text(), /故事9/);
+
+	// Products tab: the card exposes the new code links, and the editor
+	// round-trips them through the folder picker and the command route.
+	const productsTab = [...document.querySelectorAll('button')].find((button) => button.textContent.trim().startsWith('产品'));
+	assert.ok(productsTab, 'products tab button exists');
+	productsTab.click();
+	await new Promise((resolve) => setTimeout(resolve, 60));
+	assert.match(text(), /wyf0931\/dsh-story-board/);
+	assert.match(text(), /dsh-workspace\/dsh-story-board/);
+
+	const editButton = document.querySelector('.sb-prod button[title="编辑"]');
+	assert.ok(editButton, 'product edit button exists');
+	editButton.click();
+	await new Promise((resolve) => setTimeout(resolve, 60));
+	assert.match(text(), /代码关联/);
+	assert.match(text(), /代码仓库/);
+	assert.match(text(), /本地项目路径/);
+
+	const repoInput = document.querySelector('.sb-modal input[value="https://github.com/wyf0931/dsh-story-board"]');
+	const pathInput = document.querySelector('.sb-modal input[placeholder="/Users/you/code/project"]');
+	assert.ok(repoInput, 'repository input is prefilled');
+	assert.ok(pathInput, 'local path input exists');
+
+	const chooseButton = [...document.querySelectorAll('.sb-modal button')].find((button) => button.textContent.trim() === '选择…');
+	assert.ok(chooseButton, 'system folder picker trigger exists');
+	chooseButton.click();
+	await new Promise((resolve) => setTimeout(resolve, 80));
+	assert.equal(pathInput.value, '/Users/tester/code');
+
+	// Cancelling the native chooser leaves the path untouched.
+	chooseButton.click();
+	await new Promise((resolve) => setTimeout(resolve, 80));
+	assert.equal(pathInput.value, '/Users/tester/code');
+
+	const saveButton = [...document.querySelectorAll('.sb-modal button')].find((button) => button.textContent.trim() === '保存');
+	assert.ok(saveButton, 'product save button exists');
+	saveButton.click();
+	await new Promise((resolve) => setTimeout(resolve, 80));
+	assert.equal(lastCommand?.action, 'update_product');
+	assert.equal(lastCommand?.repoUrl, 'https://github.com/wyf0931/dsh-story-board');
+	assert.equal(lastCommand?.localPath, '/Users/tester/code');
 
 	// Board tab: five status columns and the demo cards.
 	const boardTab = [...document.querySelectorAll('button')].find((button) => button.textContent.trim().startsWith('看板'));

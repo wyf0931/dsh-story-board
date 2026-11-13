@@ -8,6 +8,8 @@ import {
 	StoryBoardStore,
 	emptyState,
 	mutate,
+	normalizeLocalPath,
+	normalizeRepoUrl,
 	normalizeState,
 	parseStoriesMarkdown,
 	priorityOf,
@@ -100,6 +102,38 @@ test('product → project → board → story keeps keys and relationships', () 
 	const summary = summarize(state);
 	assert.equal(summary.counts.stories, 2);
 	assert.equal(summary.byStatus.todo, 2);
+});
+
+test('product code links normalize aliases and persist through updates', () => {
+	assert.equal(normalizeRepoUrl('owner/repo'), 'https://github.com/owner/repo');
+	assert.equal(normalizeRepoUrl('git@github.com:owner/repo.git'), 'https://github.com/owner/repo');
+	assert.equal(normalizeRepoUrl('https://github.com/owner/repo.git/'), 'https://github.com/owner/repo');
+	assert.equal(normalizeRepoUrl('ssh://git@github.com/owner/repo.git'), 'https://github.com/owner/repo');
+	assert.equal(normalizeRepoUrl(''), '');
+	assert.equal(normalizeRepoUrl('javascript:alert(1)'), '');
+	assert.equal(normalizeLocalPath('  "~/code/app/"  '), '~/code/app');
+
+	const state = fresh();
+	const created = mutate(state, 'create_product', {
+		name: '代码关联',
+		repository: 'git@github.com:wyf0931/dsh-story-board.git',
+		projectHome: '~/Documents/dsh-workspace/dsh-story-board/'
+	}, { clock: clockOf }).value.product;
+	assert.equal(created.repoUrl, 'https://github.com/wyf0931/dsh-story-board');
+	assert.equal(created.localPath, '~/Documents/dsh-workspace/dsh-story-board');
+
+	mutate(state, 'update_product', { id: created.id, description: '只改描述' }, { clock: clockOf });
+	assert.equal(state.products[0].repoUrl, 'https://github.com/wyf0931/dsh-story-board');
+	assert.equal(state.products[0].localPath, '~/Documents/dsh-workspace/dsh-story-board');
+
+	mutate(state, 'update_product', { id: created.id, repoUrl: 'wyf0931/other', localPath: '' }, { clock: clockOf });
+	const updated = state.products[0];
+	assert.equal(updated.repoUrl, 'https://github.com/wyf0931/other');
+	assert.equal(updated.localPath, '');
+
+	const normalized = normalizeState({ products: [{ name: '旧文档', repo: { url: 'github.com/a/b' }, homePath: '/code/b/' }] });
+	assert.equal(normalized.products[0].repoUrl, 'https://github.com/a/b');
+	assert.equal(normalized.products[0].localPath, '/code/b');
 });
 
 test('story without a board lands in the project backlog', () => {
@@ -288,7 +322,11 @@ test('store persists commands atomically and reloads them', async () => {
 	const file = join(dir, 'store.json');
 	try {
 		const store = new StoryBoardStore({ file, clock: clockOf });
-		const created = await store.command('create_product', { name: '文档系统' });
+		const created = await store.command('create_product', {
+			name: '文档系统',
+			repoUrl: 'https://github.com/wyf0931/dsh-story-board',
+			localPath: '/Users/tester/code/dsh-story-board'
+		});
 		assert.equal(created.ok, true);
 		const snapshot = await store.snapshot();
 		assert.equal(snapshot.products.length, 1);
@@ -297,6 +335,8 @@ test('store persists commands atomically and reloads them', async () => {
 		const reloaded = new StoryBoardStore({ file, clock: clockOf });
 		const second = await reloaded.snapshot();
 		assert.equal(second.products[0].name, '文档系统');
+		assert.equal(second.products[0].repoUrl, 'https://github.com/wyf0931/dsh-story-board');
+		assert.equal(second.products[0].localPath, '/Users/tester/code/dsh-story-board');
 
 		const bad = await store.command('create_story', { title: '没有项目' });
 		assert.equal(bad.ok, false);

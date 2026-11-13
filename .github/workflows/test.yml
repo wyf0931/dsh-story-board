@@ -19,6 +19,6 @@ jobs:
           node --check store.js
           node --check client.js
       - name: Unit tests
-        run: node --test test/store.test.mjs
+        run: node --test test/store.test.mjs test/host.test.mjs
       - name: Browser smoke test
         run: node --test test/client.smoke.mjs
