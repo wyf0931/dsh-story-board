@@ -19,7 +19,7 @@ description: >
 
 | 层 | 回答什么问题 | 例子 | 规则 |
 |---|---|---|---|
-| 产品 Product | 我们在做什么东西？ | 滴滴出行 | 最高一层，用来分隔业务方向 |
+| 产品 Product | 我们在做什么东西？ | 滴滴出行 | 最高一层，用来分隔业务方向；可记录 `repoUrl` / `localPath` |
 | 项目 Project | 这一段时间集中解决什么问题？ | 郊区 → 火车站赶车场景 | **一个项目 = 一个隔离的看板空间**，不同项目的故事不混在一起 |
 | 看板 Board | 这次迭代具体做哪几件事？ | 迭代 1 · 叫车决策 | 一块板对应一次迭代或一条持续价值流 |
 | 故事 Story | 这张卡现在卡在哪？ | US-01 预估到达时间 | 卡的最小单元，不是 Task |
@@ -63,6 +63,10 @@ DoD 示例（回答用户时可以引用）：代码提交并 CR 通过、自测
 常用参数（其余见工具 schema）：
 
 ```json
+// 新建产品（repoUrl/localPath 把产品与代码 checkout 关联）
+{"action":"create_product","name":"dsh-story-board","key":"STORY",
+ "repoUrl":"wyf0931/dsh-story-board","localPath":"/Users/you/code/dsh-story-board"}
+
 // 新建故事
 {"action":"create_story","projectId":"prj_…","boardId":"brd_…","title":"预估到达时间",
  "asA":"赶高铁的乘客","iWant":"在叫车前看到预估到达时间","soThat":"判断还来不来得及",

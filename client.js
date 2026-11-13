@@ -152,6 +152,26 @@ window.__ModuleLoader__.load({
 				'product.deleteTitle': '删除产品',
 				'product.deleteMessage': '将同时删除该产品下的 {projects} 个项目、{boards} 个看板和 {stories} 个故事。此操作不可撤销。',
 				'product.manage': '管理项目',
+				'product.codeSection': '代码关联',
+				'product.repo': '代码仓库',
+				'product.repoPlaceholder': 'https://github.com/owner/repo',
+				'product.repoHint': '支持 owner/repo 简写；保存时归一化为仓库地址',
+				'product.localPath': '本地项目路径',
+				'product.localPathPlaceholder': '/Users/you/code/project',
+				'product.localPathHint': '产品对应的本地项目根目录，可直接输入或从目录中选择',
+				'product.choosePath': '选择…',
+				'product.codeEmpty': '未关联代码仓库或本地路径',
+				'picker.title': '选择项目目录',
+				'picker.hint': '单击选择文件夹，双击进入。',
+				'picker.up': '上级',
+				'picker.pathPlaceholder': '输入目录路径，回车跳转',
+				'picker.go': '跳转',
+				'picker.empty': '这个目录下没有子文件夹',
+				'picker.hidden': '显示隐藏文件夹',
+				'picker.use': '使用此目录',
+				'picker.selected': '已选择',
+				'picker.loading': '正在读取目录…',
+				'picker.retry': '重新加载',
 				'project.newTitle': '新建项目',
 				'project.editTitle': '编辑项目',
 				'project.name': '项目名称',
@@ -379,6 +399,26 @@ window.__ModuleLoader__.load({
 				'product.deleteTitle': 'Delete product',
 				'product.deleteMessage': 'This also deletes {projects} projects, {boards} boards, and {stories} stories. It cannot be undone.',
 				'product.manage': 'Manage projects',
+				'product.codeSection': 'Code links',
+				'product.repo': 'Repository',
+				'product.repoPlaceholder': 'https://github.com/owner/repo',
+				'product.repoHint': 'owner/repo shorthand is accepted and normalized to a repository URL',
+				'product.localPath': 'Local project path',
+				'product.localPathPlaceholder': '/Users/you/code/project',
+				'product.localPathHint': 'Local project root for this product; type it or pick a folder',
+				'product.choosePath': 'Choose…',
+				'product.codeEmpty': 'No repository or local path linked',
+				'picker.title': 'Choose project folder',
+				'picker.hint': 'Click to select a folder; double-click to open it.',
+				'picker.up': 'Up',
+				'picker.pathPlaceholder': 'Type a folder path and press Enter',
+				'picker.go': 'Go',
+				'picker.empty': 'No subfolders here',
+				'picker.hidden': 'Show hidden folders',
+				'picker.use': 'Use this folder',
+				'picker.selected': 'Selected',
+				'picker.loading': 'Reading folder…',
+				'picker.retry': 'Reload',
 				'project.newTitle': 'New project',
 				'project.editTitle': 'Edit project',
 				'project.name': 'Project name',
@@ -560,6 +600,27 @@ window.__ModuleLoader__.load({
 .sb-field-label{font-size:11.5px;color:var(--dsw-alias-label-secondary);display:flex;align-items:center;gap:4px}
 .sb-required{color:var(--dsw-alias-state-error-primary)}
 .sb-field-hint{font-size:10.5px;color:var(--dsw-alias-label-tertiary);line-height:1.5}
+.sb-input-row{display:flex;align-items:center;gap:6px;min-width:0}
+.sb-input-row .sb-input{flex:1;min-width:0}
+.sb-dir{margin-top:7px;border:1px solid var(--dsw-alias-border-l1);border-radius:9px;background:var(--dsw-alias-bg-layer-1);overflow:hidden}
+.sb-dir-bar{display:flex;align-items:center;gap:6px;padding:7px 8px;border-bottom:1px solid var(--dsw-alias-border-l1)}
+.sb-dir-bar .sb-input{flex:1;min-width:0}
+.sb-dir-crumbs{display:flex;align-items:center;gap:1px;padding:6px 9px;border-bottom:1px solid var(--dsw-alias-border-l1);overflow-x:auto;white-space:nowrap;font-size:11px;scrollbar-width:none}
+.sb-crumb{border:0;background:transparent;padding:2px 3px;border-radius:4px;color:var(--dsw-alias-label-secondary);font:inherit;font-size:11px;cursor:pointer;max-width:140px;overflow:hidden;text-overflow:ellipsis}
+.sb-crumb:hover{color:var(--dsw-alias-label-primary);background:var(--dsw-alias-bg-layer-2)}
+.sb-dir-hint{padding:6px 9px 2px;font-size:10.5px;color:var(--dsw-alias-label-tertiary)}
+.sb-dir-list{max-height:190px;overflow-y:auto;padding:4px}
+.sb-dir-row{display:flex;align-items:center;gap:7px;width:100%;box-sizing:border-box;padding:5px 7px;border:0;border-radius:5px;background:transparent;color:var(--dsw-alias-label-primary);font:inherit;font-size:12px;text-align:left;cursor:pointer}
+.sb-dir-row:hover{background:var(--dsw-alias-bg-layer-2)}
+.sb-dir-row-selected{background:var(--dsw-alias-bg-layer-2);box-shadow:inset 0 0 0 1px var(--dsw-alias-border-l3)}
+.sb-dir-row svg{flex:none;color:var(--dsw-alias-label-tertiary)}
+.sb-dir-name{font-weight:550;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sb-dir-path{margin-left:auto;max-width:52%;font-size:10.5px;color:var(--dsw-alias-label-tertiary);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sb-dir-empty{padding:18px 10px;text-align:center;font-size:11.5px;color:var(--dsw-alias-label-tertiary)}
+.sb-dir-error{display:flex;align-items:center;gap:7px;margin:6px 8px;padding:6px 8px;border-radius:6px;background:var(--dsw-alias-bg-layer-2);color:var(--dsw-alias-state-error-primary);font-size:11px}
+.sb-dir-foot{display:flex;align-items:center;gap:7px;padding:7px 8px;border-top:1px solid var(--dsw-alias-border-l1);flex-wrap:wrap}
+.sb-dir-toggle{display:flex;align-items:center;gap:5px;font-size:10.5px;color:var(--dsw-alias-label-secondary);cursor:pointer;white-space:nowrap}
+.sb-dir-current{flex:1;min-width:80px;font-size:10.5px;color:var(--dsw-alias-label-tertiary);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .sb-input,.sb-textarea{width:100%;box-sizing:border-box;padding:7px 9px;border-radius:7px;border:1px solid var(--dsw-alias-border-l2);background:var(--dsw-alias-bg-layer-2);color:var(--dsw-alias-label-primary);font:inherit;font-size:12.5px;outline:none;line-height:1.5}
 .sb-input:focus,.sb-textarea:focus{border-color:var(--dsw-alias-border-l4)}
 .sb-textarea{min-height:56px;resize:vertical}
@@ -629,6 +690,13 @@ window.__ModuleLoader__.load({
 .sb-prod-head{display:flex;align-items:center;gap:7px;min-width:0}
 .sb-prod-name{font-size:13.5px;font-weight:650;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .sb-prod-desc{font-size:11.5px;line-height:1.6;color:var(--dsw-alias-label-secondary);min-height:37px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.sb-prod-code{display:flex;flex-direction:column;gap:4px;padding-top:8px;border-top:1px dashed var(--dsw-alias-border-l1);min-width:0}
+.sb-code-row{display:flex;align-items:center;gap:6px;min-width:0;font-size:11px;line-height:1.5;color:var(--dsw-alias-label-secondary);text-decoration:none}
+a.sb-code-row:hover{color:var(--dsw-alias-brand-primary)}
+.sb-code-row svg{flex:none;opacity:.75}
+.sb-code-text{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0}
+.sb-code-path .sb-code-text{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:10.5px}
+.sb-code-empty{font-size:11px;line-height:1.5;color:var(--dsw-alias-label-tertiary)}
 .sb-meta-row{display:flex;align-items:center;gap:12px;flex-wrap:wrap;font-size:11px;color:var(--dsw-alias-label-secondary)}
 .sb-card-actions{display:flex;align-items:center;gap:5px;flex-wrap:wrap}
 .sb-rows{display:flex;flex-direction:column;gap:7px}
@@ -741,7 +809,8 @@ window.__ModuleLoader__.load({
 
 		const api = {
 			state: async () => (await post('state', {})).value,
-			command: async (body) => post('command', body)
+			command: async (body) => post('command', body),
+			listDirectory: async (path) => (await post('directory', { path })).value
 		};
 
 		/* ------------------------------------------------------------------ */
@@ -778,6 +847,17 @@ window.__ModuleLoader__.load({
 				h('rect', { x: 16.3, y: 4.5, width: 4.2, height: 12, rx: 1.4 })),
 			chevron: (size = 10) => h('svg', { width: size, height: size, viewBox: '0 0 12 12', fill: 'none', 'aria-hidden': 'true', stroke: 'currentColor', strokeWidth: 1.5, strokeLinecap: 'round', strokeLinejoin: 'round' },
 				h('path', { d: 'M3 4.5L6 7.5L9 4.5' })),
+			repo: (size = 12) => h('svg', { width: size, height: size, viewBox: '0 0 16 16', fill: 'none', 'aria-hidden': 'true', stroke: 'currentColor', strokeWidth: 1.4, strokeLinecap: 'round', strokeLinejoin: 'round' },
+				h('circle', { cx: 4.4, cy: 3.4, r: 1.6 }),
+				h('circle', { cx: 4.4, cy: 12.6, r: 1.6 }),
+				h('circle', { cx: 11.6, cy: 6.4, r: 1.6 }),
+				h('path', { d: 'M4.4 5v6M6 10.8c3.4 0 4-1.6 4-2.8V8' })),
+			folder: (size = 12) => h('svg', { width: size, height: size, viewBox: '0 0 16 16', fill: 'none', 'aria-hidden': 'true', stroke: 'currentColor', strokeWidth: 1.4, strokeLinecap: 'round', strokeLinejoin: 'round' },
+				h('path', { d: 'M2 4.2c0-.6.4-1 1-1h3l1.2 1.4H13c.6 0 1 .4 1 1v5.8c0 .6-.4 1-1 1H3c-.6 0-1-.4-1-1V4.2z' })),
+			up: (size = 12) => h('svg', { width: size, height: size, viewBox: '0 0 16 16', fill: 'none', 'aria-hidden': 'true', stroke: 'currentColor', strokeWidth: 1.5, strokeLinecap: 'round', strokeLinejoin: 'round' },
+				h('path', { d: 'M8 12.5V3.8M4.2 7.6L8 3.8l3.8 3.8' })),
+			right: (size = 10) => h('svg', { width: size, height: size, viewBox: '0 0 12 12', fill: 'none', 'aria-hidden': 'true', stroke: 'currentColor', strokeWidth: 1.5, strokeLinecap: 'round', strokeLinejoin: 'round' },
+				h('path', { d: 'M4.5 3L7.5 6L4.5 9' })),
 			empty: (size = 22) => h('svg', { width: size, height: size, viewBox: '0 0 24 24', fill: 'none', 'aria-hidden': 'true', stroke: 'currentColor', strokeWidth: 1.4, strokeLinecap: 'round', strokeLinejoin: 'round' },
 				h('rect', { x: 3, y: 4.5, width: 18, height: 15, rx: 2.5 }),
 				h('path', { d: 'M3 9h18M8 13h8M8 16h5' }))
@@ -815,6 +895,18 @@ window.__ModuleLoader__.load({
 
 		function formatDate(value) {
 			return typeof value === 'string' && value.length >= 10 ? value.slice(0, 10) : '';
+		}
+
+		/** Short, readable label for a repository URL: `owner/repo`. */
+		function repoLabel(url) {
+			if (typeof url !== 'string' || url === '') return '';
+			const clean = url
+				.replace(/^https?:\/\//i, '')
+				.replace(/^www\./i, '')
+				.replace(/^github\.com\//i, '')
+				.replace(/\.git$/i, '')
+				.replace(/\/+$/, '');
+			return clean;
 		}
 
 		function relTime(t, value) {
@@ -1190,6 +1282,20 @@ window.__ModuleLoader__.load({
 							h('div', { className: 'sb-prod-name' }, product.name),
 							h('span', { className: 'sb-badge' }, t(`product.color.${product.color}`))),
 						h('div', { className: 'sb-prod-desc' }, product.description || '—'),
+						h('div', { className: 'sb-prod-code' },
+							product.repoUrl
+								? h('a', { className: 'sb-code-row', href: product.repoUrl, target: '_blank', rel: 'noreferrer', title: product.repoUrl },
+									Icon.repo(12),
+									h('span', { className: 'sb-code-text' }, repoLabel(product.repoUrl)))
+								: undefined,
+							product.localPath
+								? h('div', { className: 'sb-code-row sb-code-path', title: product.localPath },
+									Icon.folder(12),
+									h('span', { className: 'sb-code-text' }, product.localPath))
+								: undefined,
+							!product.repoUrl && !product.localPath
+								? h('div', { className: 'sb-code-empty' }, t('product.codeEmpty'))
+								: undefined),
 						h('div', { className: 'sb-meta-row' },
 							h('span', null, `${String(productProjects.length)} ${t('common.projects')}`),
 							h('span', null, `${String(productBoards.length)} ${t('common.boards')}`),
@@ -1711,15 +1817,141 @@ window.__ModuleLoader__.load({
 		/* Dialogs: product / project / board                                 */
 		/* ------------------------------------------------------------------ */
 
+		/**
+		 * Inline folder browser for the product form. One level at a time, with
+		 * breadcrumbs and an editable path: click a folder to select it, double
+		 * click to enter it, or type a path and press Enter. The path returned by
+		 * the Host is always absolute, which is what the product record stores.
+		 */
+		function DirectoryBrowser({ initialPath, onPick, onClose, t }) {
+			const [listing, setListing] = useState(null);
+			const [loading, setLoading] = useState(true);
+			const [error, setError] = useState('');
+			const [draft, setDraft] = useState(typeof initialPath === 'string' ? initialPath : '');
+			const [selected, setSelected] = useState('');
+			const [showHidden, setShowHidden] = useState(false);
+			const alive = useRef(true);
+
+			const load = useCallback(async (path) => {
+				setLoading(true);
+				setError('');
+				try {
+					const value = await api.listDirectory(typeof path === 'string' ? path : '');
+					if (alive.current !== true) return;
+					setListing(value);
+					setDraft(value.path);
+					setSelected('');
+				} catch (cause) {
+					if (alive.current !== true) return;
+					setError(String(cause?.message ?? cause));
+				} finally {
+					if (alive.current === true) setLoading(false);
+				}
+			}, []);
+
+			useEffect(() => {
+				alive.current = true;
+				void load(typeof initialPath === 'string' ? initialPath : '');
+				return () => {
+					alive.current = false;
+				};
+			}, [load, initialPath]);
+
+			const crumbs = listing?.crumbs ?? [];
+			const parent = crumbs.length > 1 ? crumbs[crumbs.length - 2].path : undefined;
+			const entries = (listing?.entries ?? []).filter((entry) => showHidden === true || entry.hidden !== true);
+			const chosen = selected !== '' ? selected : listing?.path ?? '';
+
+			return h('div', { className: 'sb-dir' },
+				h('div', { className: 'sb-dir-bar' },
+					h(Button, {
+						variant: 'ghost',
+						size: 'sm',
+						icon: Icon.up(12),
+						onClick: () => { if (parent !== undefined) void load(parent); },
+						disabled: parent === undefined,
+						title: t('picker.up'),
+						ariaLabel: t('picker.up')
+					}),
+					h('input', {
+						className: 'sb-input',
+						value: draft,
+						placeholder: t('picker.pathPlaceholder'),
+						onChange: (event) => setDraft(event.target.value),
+						onKeyDown: (event) => {
+							if (event.key !== 'Enter') return;
+							event.preventDefault();
+							void load(draft);
+						}
+					}),
+					h(Button, { size: 'sm', onClick: () => { void load(draft); }, disabled: loading === true }, t('picker.go'))),
+				crumbs.length === 0 ? undefined : h('div', { className: 'sb-dir-crumbs' }, crumbs.map((crumb, index) => h(React.Fragment, { key: crumb.path },
+					index === 0 ? undefined : Icon.right(9),
+					h('button', {
+						type: 'button',
+						className: 'sb-crumb',
+						title: crumb.path,
+						onClick: () => { void load(crumb.path); }
+					}, index === 0 ? '/' : crumb.name)))),
+				h('div', { className: 'sb-dir-hint' }, t('picker.hint')),
+				error !== '' ? h('div', { className: 'sb-dir-error', role: 'alert' },
+					Icon.alert(12),
+					h('span', { style: { flex: 1, minWidth: 0 } }, error),
+					h(Button, { size: 'sm', onClick: () => { void load(draft); } }, t('picker.retry'))) : undefined,
+				loading === true
+					? h('div', { className: 'sb-dir-empty' }, t('picker.loading'))
+					: error !== ''
+						? undefined
+						: entries.length === 0
+							? h('div', { className: 'sb-dir-empty' }, t('picker.empty'))
+							: h('div', { className: 'sb-dir-list', role: 'listbox', 'aria-label': t('picker.title') },
+								entries.map((entry) => h('button', {
+									key: entry.path,
+									type: 'button',
+									role: 'option',
+									'aria-selected': selected === entry.path,
+									className: `sb-dir-row${selected === entry.path ? ' sb-dir-row-selected' : ''}`,
+									title: entry.path,
+									onClick: () => setSelected(entry.path),
+									onDoubleClick: () => { void load(entry.path); }
+								}, Icon.folder(13), h('span', { className: 'sb-dir-name' }, entry.name), h('span', { className: 'sb-dir-path' }, entry.path)))),
+				h('div', { className: 'sb-dir-foot' },
+					h('label', { className: 'sb-dir-toggle' },
+						h('input', {
+							type: 'checkbox',
+							checked: showHidden,
+							onChange: (event) => setShowHidden(event.target.checked)
+						}),
+						h('span', null, t('picker.hidden'))),
+					h('span', { className: 'sb-dir-current', title: chosen }, selected !== '' ? `${t('picker.selected')}: ${selected}` : chosen),
+					h(Button, { size: 'sm', onClick: onClose }, t('common.cancel')),
+					h(Button, {
+						variant: 'primary',
+						size: 'sm',
+						disabled: listing === null || loading === true || chosen === '',
+						onClick: () => { if (chosen !== '') onPick(chosen); }
+					}, t('picker.use'))));
+		}
+
 		function ProductDialog({ product, onClose, onSubmit, busy, t }) {
 			const [name, setName] = useState(product?.name ?? '');
 			const [key, setKey] = useState(product?.key ?? '');
 			const [description, setDescription] = useState(product?.description ?? '');
 			const [color, setColor] = useState(product?.color ?? 'blue');
+			const [repoUrl, setRepoUrl] = useState(product?.repoUrl ?? '');
+			const [localPath, setLocalPath] = useState(product?.localPath ?? '');
+			const [browsing, setBrowsing] = useState(false);
 			const valid = name.trim() !== '';
 			const submit = () => {
 				if (valid !== true || busy === true) return;
-				void onSubmit({ name: name.trim(), key: key.trim(), description: description.trim(), color });
+				void onSubmit({
+					name: name.trim(),
+					key: key.trim(),
+					description: description.trim(),
+					color,
+					repoUrl: repoUrl.trim(),
+					localPath: localPath.trim()
+				});
 			};
 			return h(Modal, {
 				title: product === undefined ? t('product.newTitle') : t('product.editTitle'),
@@ -1738,7 +1970,42 @@ window.__ModuleLoader__.load({
 							h('select', { className: 'sb-input', value: color, onChange: (event) => setColor(event.target.value) },
 								['blue', 'green', 'amber', 'red', 'slate'].map((value) => h('option', { key: value, value }, t(`product.color.${value}`)))))),
 					h(Field, { label: t('product.description') },
-						h('textarea', { className: 'sb-textarea', value: description, placeholder: t('product.descriptionPlaceholder'), onChange: (event) => setDescription(event.target.value) }))));
+						h('textarea', { className: 'sb-textarea', value: description, placeholder: t('product.descriptionPlaceholder'), onChange: (event) => setDescription(event.target.value) })),
+					h('div', { className: 'sb-form-section' },
+						h('div', { className: 'sb-form-section-head' },
+							h('span', { className: 'sb-form-section-title' }, t('product.codeSection'))),
+						h(Field, { label: t('product.repo'), hint: t('product.repoHint') },
+							h('input', {
+								className: 'sb-input',
+								value: repoUrl,
+								placeholder: t('product.repoPlaceholder'),
+								onChange: (event) => setRepoUrl(event.target.value)
+							})),
+						h('div', { className: 'sb-field' },
+							h('span', { className: 'sb-field-label' }, t('product.localPath')),
+							h('div', { className: 'sb-input-row' },
+								h('input', {
+									className: 'sb-input',
+									value: localPath,
+									placeholder: t('product.localPathPlaceholder'),
+									onChange: (event) => setLocalPath(event.target.value),
+									onKeyDown: (event) => { if (event.key === 'Enter') event.preventDefault(); }
+								}),
+								h(Button, {
+									size: 'sm',
+									variant: browsing === true ? 'primary' : undefined,
+									onClick: () => setBrowsing((value) => value !== true)
+								}, t('product.choosePath'))),
+							h('span', { className: 'sb-field-hint' }, t('product.localPathHint')),
+							browsing === true ? h(DirectoryBrowser, {
+								initialPath: localPath,
+								onPick: (path) => {
+									setLocalPath(path);
+									setBrowsing(false);
+								},
+								onClose: () => setBrowsing(false),
+								t
+							}) : undefined))));
 		}
 
 		function ProjectDialog({ project, products, defaultProductId, onClose, onSubmit, busy, t }) {

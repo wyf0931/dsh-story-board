@@ -16,6 +16,7 @@ import { readFile } from 'node:fs/promises';
 import { homedir } from 'node:os';
 import { isAbsolute, join, resolve } from 'node:path';
 
+import { listDirectory } from './browse.js';
 import { PRIORITIES, STATUSES, StoryBoardStore } from './store.js';
 
 /** Cordis plugin id and the loader row id in cordis.patch.yml. */
@@ -36,7 +37,7 @@ const STATUS_ENUM = STATUSES.map((status) => status.id);
 
 /** Text shared by both tools: the hierarchy, statuses, and where data lives. */
 const MODEL = `Data model (one board document):
-- Product: a product or learning project (key, name, description, color).
+- Product: a product or learning project (key, name, description, color, repoUrl, localPath). repoUrl is the GitHub/repository address; localPath is the absolute local project root that ties the board to the code checkout.
 - Project: a time-boxed initiative under one product. A project is the container that keeps boards separate; never mix two initiatives on one board.
 - Board: one iteration (or a continuous-flow board) under one project. Stories with no board live in the project backlog.
 - Story: the card. key is "US-01" per project, stable forever. status is one of ${STATUS_ENUM.join(' | ')}. priority is ${PRIORITIES.join(' | ')}. estimate is story points. acceptanceCriteria is a checklist (Given/When/Then preferred).
@@ -67,8 +68,8 @@ const APPLY_DESCRIPTION = `Create, update, delete, move, or seed entities on the
 Workflow: call story_board_query first, then one action. To import a whole story document, use story_board_import instead of many create_story calls.
 
 Actions:
-- create_product {name, key?, description?, color?} → product
-- update_product {id, name?, key?, description?, color?}
+- create_product {name, key?, description?, color?, repoUrl?, localPath?} → product
+- update_product {id, name?, key?, description?, color?, repoUrl?, localPath?} — repoUrl/localPath set the product's code link; pass an empty string to clear one
 - delete_product {id, cascade?} — cascade:true also deletes projects/boards/stories (default true; set false to refuse when children exist)
 - create_project {productId, name, key?, description?, objective?, startDate?, endDate?}
 - update_project {id, ...same fields}
@@ -420,6 +421,15 @@ export function apply(ctx) {
 		register('/api/story-board/state', async () => {
 			try {
 				return jsonResponse({ ok: true, value: await store.snapshot() });
+			} catch (error) {
+				return jsonResponse(failureOf(error));
+			}
+		});
+
+		register('/api/story-board/directory', async (request) => {
+			try {
+				const body = await readBody(request);
+				return jsonResponse({ ok: true, value: await listDirectory(body.path) });
 			} catch (error) {
 				return jsonResponse(failureOf(error));
 			}

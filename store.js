@@ -95,6 +95,42 @@ export function normalizeTags(value) {
 	return tags;
 }
 
+/** Normalize a repository address: `owner/repo`, `git@host:owner/repo`, ssh, https. */
+export function normalizeRepoUrl(value) {
+	let clean = textOf(value, 300).replace(/\.git\/?$/i, '').replace(/\/+$/, '');
+	if (clean === '') return '';
+	const scp = /^git@([^:/\s]+):(.+)$/.exec(clean);
+	if (scp !== null) clean = `https://${scp[1]}/${scp[2]}`;
+	const ssh = /^ssh:\/\/git@([^/]+)\/(.+)$/i.exec(clean);
+	if (ssh !== null) clean = `https://${ssh[1]}/${ssh[2]}`;
+	const git = /^git:\/\/([^/]+)\/(.+)$/i.exec(clean);
+	if (git !== null) clean = `https://${git[1]}/${git[2]}`;
+	if (/^[A-Za-z0-9_.-]+\/[A-Za-z0-9_.-]+$/.test(clean) === true) clean = `https://github.com/${clean}`;
+	if (/^[A-Za-z0-9.-]+\.[A-Za-z]{2,}\//.test(clean) === true) clean = `https://${clean}`;
+	// A repository link is rendered as an anchor: keep only web URLs.
+	if (/^https?:\/\//i.test(clean) !== true) return '';
+	return clean.slice(0, 300);
+}
+
+/** Normalize a local project root: trim quotes, keep `~`, drop a trailing separator. */
+export function normalizeLocalPath(value) {
+	let clean = textOf(value, 500).replace(/^["']+|["']+$/g, '').trim();
+	if (clean === '') return '';
+	if (clean.length > 1 && /^[A-Za-z]:[\\/]$/.test(clean) !== true) clean = clean.replace(/[\\/]+$/, '');
+	return clean.slice(0, 500);
+}
+
+/** Read the optional code-link fields from a flat or nested product payload. */
+function productCodeOf(source) {
+	if (isObject(source) !== true) return {};
+	const repo = source.repoUrl ?? source.repository ?? source.repo ?? source.githubRepo;
+	const local = source.localPath ?? source.homePath ?? source.projectHome ?? source.localProjectHome;
+	const fields = {};
+	if (repo !== undefined) fields.repoUrl = normalizeRepoUrl(isObject(repo) ? repo.url : repo);
+	if (local !== undefined) fields.localPath = normalizeLocalPath(local);
+	return fields;
+}
+
 /** Normalize acceptance criteria into `{ id, text, done }` rows. */
 export function normalizeAcceptance(value) {
 	const raw = Array.isArray(value)
@@ -274,6 +310,8 @@ export function normalizeState(raw) {
 		name: textOf(entry.name, 80),
 		description: textOf(entry.description, 400),
 		color: PRODUCT_COLORS.includes(entry.color) ? entry.color : 'blue',
+		repoUrl: normalizeRepoUrl(isObject(entry.repo) ? entry.repo.url : entry.repoUrl ?? entry.repository ?? entry.repo),
+		localPath: normalizeLocalPath(entry.localPath ?? entry.homePath ?? entry.projectHome ?? entry.localProjectHome),
 		createdAt: textOf(entry.createdAt, 40),
 		updatedAt: textOf(entry.updatedAt, 40)
 	})).filter((entry) => entry.id !== '' && entry.name !== '');
@@ -520,12 +558,15 @@ export function mutate(state, rawAction, input = {}, { clock = () => new Date().
 		case 'create_product':
 		case 'product_create': {
 			const name = requireText(body.name ?? body.product?.name, '产品名称', 80);
+			const code = { ...productCodeOf(body.product), ...productCodeOf(body) };
 			const product = {
 				id: newId('prd'),
 				key: uniqueKey(state.products, keyOf(body.key ?? body.product?.key, name, 'PRD')),
 				name,
 				description: textOf(body.description ?? body.product?.description, 400),
 				color: PRODUCT_COLORS.includes(body.color ?? body.product?.color) ? body.color ?? body.product.color : 'blue',
+				repoUrl: code.repoUrl ?? '',
+				localPath: code.localPath ?? '',
 				createdAt: at,
 				updatedAt: at
 			};
@@ -542,6 +583,9 @@ export function mutate(state, rawAction, input = {}, { clock = () => new Date().
 				product.key = uniqueKey(state.products.filter((entry) => entry.id !== product.id), candidate);
 			}
 			if (body.description !== undefined || patch.description !== undefined) product.description = textOf(body.description ?? patch.description, 400);
+			const code = { ...productCodeOf(patch), ...productCodeOf(body) };
+			if (code.repoUrl !== undefined) product.repoUrl = code.repoUrl;
+			if (code.localPath !== undefined) product.localPath = code.localPath;
 			if (body.color !== undefined || patch.color !== undefined) {
 				const color = body.color ?? patch.color;
 				if (PRODUCT_COLORS.includes(color) === true) product.color = color;
@@ -825,6 +869,8 @@ function importStories(state, body, { clock, at }) {
 			name,
 			description: '',
 			color: 'blue',
+			repoUrl: '',
+			localPath: '',
 			createdAt: at,
 			updatedAt: at
 		};
@@ -832,12 +878,15 @@ function importStories(state, body, { clock, at }) {
 		recordActivity(state, 'product.created', product.name, { productId: product.id }, at);
 	} else if (product === undefined && isObject(body.product) === true) {
 		const name = requireText(body.product.name, '产品名称', 80);
+		const code = productCodeOf(body.product);
 		product = {
 			id: newId('prd'),
 			key: uniqueKey(state.products, keyOf(body.product.key, name, 'PRD')),
 			name,
 			description: textOf(body.product.description, 400),
 			color: 'blue',
+			repoUrl: code.repoUrl ?? '',
+			localPath: code.localPath ?? '',
 			createdAt: at,
 			updatedAt: at
 		};
@@ -971,6 +1020,8 @@ function seedDemo(state, { clock, at }) {
 		name: '滴滴出行（学习项目）',
 		description: '用郊区赶火车的真实链路练习用户故事与看板管理。',
 		color: 'amber',
+		repoUrl: '',
+		localPath: '',
 		createdAt: at,
 		updatedAt: at
 	};
