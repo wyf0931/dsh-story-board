@@ -11,6 +11,7 @@ import {
 	normalizeLocalPath,
 	normalizeRepoUrl,
 	normalizeState,
+	normalizeTags,
 	parseStoriesMarkdown,
 	priorityOf,
 	statusOf,
@@ -179,6 +180,13 @@ test('move_story orders before a sibling with a midpoint rank', () => {
 	const ordered = state.stories.filter((entry) => entry.status === 'todo').sort((left, right) => left.rank - right.rank);
 	assert.deepEqual(ordered.map((entry) => entry.title), ['C', 'A', 'B']);
 	void two;
+});
+
+test('tags drop wrapping brackets and quotes from a bracketed string or tokens', () => {
+	assert.deepEqual(normalizeTags('[注册, 登录, 邀请制, 安全]'), ['注册', '登录', '邀请制', '安全']);
+	assert.deepEqual(normalizeTags(['[会员', '核销', '权限]']), ['会员', '核销', '权限']);
+	// The 8-tag cap still applies after cleaning.
+	assert.equal(normalizeTags('a,b,c,d,e,f,g,h,i,j').length, 8);
 });
 
 test('markdown import reads the user-story-crafter template shape', () => {

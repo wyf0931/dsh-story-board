@@ -81,12 +81,14 @@ export function normalizeTags(value) {
 	const raw = Array.isArray(value)
 		? value
 		: typeof value === 'string'
-			? value.replace(/[#＃]/g, '').split(/[,，、;；]/)
+			? value.replace(/[#＃]/g, '').replace(/[\[\]【】]/g, '').split(/[,，、;；]/)
 			: [];
 	const seen = new Set();
 	const tags = [];
 	for (const candidate of raw) {
-		const tag = textOf(candidate, 24);
+		// A tag may arrive wrapped in brackets or quotes ("[注册" / "安全]"); strip
+		// the wrapping so the board shows clean chips instead of stray brackets.
+		const tag = textOf(candidate, 24).replace(/^[\[\]【】"'\s]+/, '').replace(/[\[\]【】"'\s]+$/, '');
 		if (tag === '' || seen.has(tag) === true) continue;
 		seen.add(tag);
 		tags.push(tag);
