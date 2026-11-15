@@ -175,7 +175,6 @@ window.__ModuleLoader__.load({
 				'import.key': '产品 Key',
 				'import.focus': '重点关注（可选）',
 				'import.focusPlaceholder': '例如：只关注结算与优惠券链路',
-				'import.count': '目标故事数量',
 				'import.language': '提示词语言',
 				'import.language.zh': '中文',
 				'import.language.en': 'English',
@@ -442,7 +441,6 @@ window.__ModuleLoader__.load({
 				'import.key': 'Product key',
 				'import.focus': 'Focus (optional)',
 				'import.focusPlaceholder': 'e.g. focus on checkout and coupons',
-				'import.count': 'Target story count',
 				'import.language': 'Prompt language',
 				'import.language.zh': '中文',
 				'import.language.en': 'English',
@@ -1986,7 +1984,6 @@ a.sb-code-row:hover{color:var(--dsw-alias-brand-primary)}
 			const [productKey, setProductKey] = useState('');
 			const [repoUrl, setRepoUrl] = useState('');
 			const [focus, setFocus] = useState('');
-			const [maxStories, setMaxStories] = useState('10');
 			const [language, setLanguage] = useState('zh');
 			const [prompt, setPrompt] = useState('');
 			const [picking, setPicking] = useState(false);
@@ -2023,7 +2020,6 @@ a.sb-code-row:hover{color:var(--dsw-alias-brand-primary)}
 						productKey: productKey.trim(),
 						repoUrl: repoUrl.trim(),
 						focus: focus.trim(),
-						maxStories: Number(maxStories),
 						language
 					});
 					setPrompt(value.prompt);
@@ -2118,13 +2114,10 @@ a.sb-code-row:hover{color:var(--dsw-alias-brand-primary)}
 					h('div', { className: 'sb-grid-2' },
 						h(Field, { label: t('import.focus') },
 							h('input', { className: 'sb-input', value: focus, placeholder: t('import.focusPlaceholder'), onChange: (event) => setFocus(event.target.value) })),
-						h('div', { className: 'sb-grid-2' },
-							h(Field, { label: t('import.count') },
-								h('input', { className: 'sb-input', type: 'number', min: '1', max: '40', value: maxStories, onChange: (event) => setMaxStories(event.target.value) })),
-							h(Field, { label: t('import.language') },
-								h('select', { className: 'sb-input', value: language, onChange: (event) => setLanguage(event.target.value) },
-									h('option', { value: 'zh' }, t('import.language.zh')),
-									h('option', { value: 'en' }, t('import.language.en')))))),
+						h(Field, { label: t('import.language') },
+							h('select', { className: 'sb-input', value: language, onChange: (event) => setLanguage(event.target.value) },
+								h('option', { value: 'zh' }, t('import.language.zh')),
+								h('option', { value: 'en' }, t('import.language.en'))))),
 					h(Button, {
 						variant: 'primary',
 						size: 'sm',

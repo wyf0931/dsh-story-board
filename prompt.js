@@ -33,7 +33,6 @@ export function deriveProductName(pathLike) {
  * @param {string} [config.productKey]
  * @param {string} [config.repoUrl]    Optional repository link to record on the product.
  * @param {string} [config.focus]      Optional free-text emphasis from the user.
- * @param {number} [config.maxStories] Target story count (default 10).
  * @param {'zh'|'en'} [config.language]
  * @returns {string} The full prompt text.
  */
@@ -41,22 +40,19 @@ export function composeProjectImportPrompt(config) {
 	const projectPath = String(config?.path ?? '').trim();
 	if (projectPath === '') throw new Error('composeProjectImportPrompt: path is required');
 	const language = config?.language === 'en' ? 'en' : 'zh';
-	const maxStories = Number.isFinite(Number(config?.maxStories)) && Number(config?.maxStories) > 0
-		? Math.min(40, Math.trunc(Number(config?.maxStories)))
-		: 10;
 	const name = String(config?.productName ?? '').trim() || deriveProductName(projectPath);
 	const key = String(config?.productKey ?? '').trim() || deriveProductKey(projectPath);
 	const repoUrl = String(config?.repoUrl ?? '').trim();
 	const focus = String(config?.focus ?? '').trim();
 
 	const lines = language === 'zh'
-		? zhPrompt({ projectPath, name, key, repoUrl, focus, maxStories })
-		: enPrompt({ projectPath, name, key, repoUrl, focus, maxStories });
+		? zhPrompt({ projectPath, name, key, repoUrl, focus })
+		: enPrompt({ projectPath, name, key, repoUrl, focus });
 	return lines.join('\n');
 }
 
 /** Chinese prompt body. */
-function zhPrompt({ projectPath, name, key, repoUrl, focus, maxStories }) {
+function zhPrompt({ projectPath, name, key, repoUrl, focus }) {
 	const head = [
 		'你是一名资深产品经理兼敏捷教练。下面是一个**已经存在的本地项目**，请你反向推导出它的用户故事（User Story），并直接落到「用户故事看板」上。',
 		'',
@@ -64,7 +60,6 @@ function zhPrompt({ projectPath, name, key, repoUrl, focus, maxStories }) {
 		repoUrl === '' ? null : '代码仓库：' + repoUrl,
 		'产品名：' + name + '（Key：' + key + '）',
 		focus === '' ? null : '用户重点关注：' + focus,
-		'目标故事数量：约 ' + String(maxStories) + ' 条（可按实际功能密度上下浮动约 20%）。',
 		''
 	];
 	const body = [
@@ -85,6 +80,7 @@ function zhPrompt({ projectPath, name, key, repoUrl, focus, maxStories }) {
 		'',
 		'## 第三步：按端推导用户故事',
 		'从「用户价值」出发（而不是从技术模块出发），把核心能力写成用户故事：',
+		'- **故事数量由项目实际功能决定，不要人为设上限，也不要为了凑数硬加**：项目有多少条值得独立成卡的能力，就写多少条；',
 		'- 每条用 Connextra 三段式：作为一个<角色> / 我想要<能力> / 以便于<价值>；',
 		'- 每条配 2-4 条**可观测、可测试**的验收标准（优先 Given / When / Then）；',
 		'- **asA / iWant / soThat 与 acceptanceCriteria 都是必填**：只给 title 会得到一张空白卡片。篇幅紧张时宁可少几条故事，也要保证每条都有完整三段式与验收标准；',
@@ -118,7 +114,7 @@ function zhPrompt({ projectPath, name, key, repoUrl, focus, maxStories }) {
 }
 
 /** English prompt body. */
-function enPrompt({ projectPath, name, key, repoUrl, focus, maxStories }) {
+function enPrompt({ projectPath, name, key, repoUrl, focus }) {
 	const head = [
 		'You are a senior product manager and agile coach. Below is an **existing local project**. Reverse-engineer its user stories and land them directly on the user-story board.',
 		'',
@@ -126,7 +122,6 @@ function enPrompt({ projectPath, name, key, repoUrl, focus, maxStories }) {
 		repoUrl === '' ? null : 'Repository: ' + repoUrl,
 		'Product name: ' + name + ' (key: ' + key + ')',
 		focus === '' ? null : 'User focus: ' + focus,
-		'Target story count: about ' + String(maxStories) + ' (flex roughly 20% by real feature density).',
 		''
 	];
 	const body = [
@@ -147,6 +142,7 @@ function enPrompt({ projectPath, name, key, repoUrl, focus, maxStories }) {
 		'',
 		'## Step 3 — Derive the user stories, organized by surface',
 		'Start from **user value** (not from technical modules) and express core capabilities as stories:',
+		'- **Let the project’s real feature density decide the story count — impose no cap and do not pad to hit a number**: write as many stories as there are capabilities worth a card;',
 		'- Use the Connextra form for each: As a <role> / I want <capability> / so that <value>;',
 		'- Add 2-4 **observable, testable** acceptance criteria each (prefer Given / When / Then);',
 		'- **asA / iWant / soThat and acceptanceCriteria are mandatory**: a title alone produces a blank card. If space is tight, write fewer stories rather than leaving fields empty;',
