@@ -38,13 +38,16 @@ if (hasSibling) {
 
 /** Build the snapshot the Host route would return, with the demo board. */
 function demoSnapshot() {
+	const clock = () => '2026-11-13T08:00:00.000Z';
 	const state = emptyState();
-	mutate(state, 'seed_demo', {}, { clock: () => '2026-11-13T08:00:00.000Z' });
+	mutate(state, 'seed_demo', {}, { clock });
+	// A project with no board: its row must still navigate to the board tab.
+	mutate(state, 'create_project', { productId: state.products[0].id, name: '无板项目' }, { clock });
 	mutate(state, 'update_product', {
 		id: state.products[0].id,
 		repoUrl: 'https://github.com/wyf0931/dsh-story-board',
 		localPath: '/Users/scott/Documents/dsh-workspace/dsh-story-board'
-	}, { clock: () => '2026-11-13T08:00:00.000Z' });
+	}, { clock });
 	return {
 		...structuredClone(state),
 		meta: {
@@ -274,6 +277,22 @@ test('client panel mounts, switches tabs, and opens a story', { skip: skipReason
 	assert.match(text(), /编辑故事/);
 	assert.match(text(), /验收标准/);
 	assert.match(text(), /作为一个/);
+
+	// Close the drawer, then confirm a board-less project row navigates to the
+	// board tab's empty state instead of silently staying on the projects tab.
+	const closeDrawer = document.querySelector('.sb-drawer button[aria-label="Close"]');
+	assert.ok(closeDrawer, 'story drawer close button exists');
+	closeDrawer.click();
+	await new Promise((resolve) => setTimeout(resolve, 60));
+	const projectsTab = [...document.querySelectorAll('button')].find((button) => button.textContent.trim().startsWith('项目'));
+	assert.ok(projectsTab, 'projects tab exists');
+	projectsTab.click();
+	await new Promise((resolve) => setTimeout(resolve, 60));
+	const boardlessRow = [...document.querySelectorAll('.sb-row')].find((row) => row.textContent.includes('无板项目'));
+	assert.ok(boardlessRow, 'board-less project row is listed');
+	boardlessRow.click();
+	await new Promise((resolve) => setTimeout(resolve, 60));
+	assert.match(text(), /这个项目还没有看板/);
 
 	root.unmount();
 	dom.window.close();

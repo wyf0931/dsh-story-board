@@ -2509,7 +2509,11 @@ a.sb-code-row:hover{color:var(--dsw-alias-brand-primary)}
 			const gotoProject = useCallback((project) => {
 				const board = (snapshot?.boards ?? []).find((entry) => entry.projectId === project.id);
 				setSelection({ productId: project.productId, projectId: project.id, boardId: board?.id ?? '' });
-				setTab(board === undefined ? 'projects' : 'board');
+				// Always land on the board tab so the click visibly responds. A project
+				// with no board yet (e.g. a fresh import whose stories sit in the
+				// backlog) shows the empty-board state with a create-board action
+				// rather than silently staying put.
+				setTab('board');
 			}, [snapshot]);
 
 			const openStory = useCallback((story) => {

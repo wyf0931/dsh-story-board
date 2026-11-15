@@ -98,10 +98,11 @@ DoD 示例（回答用户时可以引用）：代码提交并 CR 通过、自测
  "productName":"滴滴出行","projectName":"郊区赶车场景",
  "boardName":"迭代 1 · 叫车决策"}
 
-// 反向导入一个已有项目（把产品与代码 checkout 关联）
+// 反向导入一个已有项目（把产品与代码 checkout 关联；建一块板让故事直接落在看板待办列）
 {"productName":"dsh-story-board","productKey":"STORY",
  "repoUrl":"wyf0931/dsh-story-board","localPath":"/Users/you/code/dsh-story-board",
- "description":"…","projectName":"产品现状梳理","stories":[…]}
+ "description":"…","projectName":"产品现状梳理","boardName":"产品现状梳理",
+ "defaultStatus":"backlog","stories":[…]}
 ```
 
 ## 四、标准流程
@@ -140,7 +141,7 @@ DoD 示例（回答用户时可以引用）：代码提交并 CR 通过、自测
 1. 确认本地项目路径（面板「产品」Tab 右上角的**导入产品**按钮可以选目录、自动生成提示词，并把提示词预填进一个新 DSH 对话的输入框，按 Enter 发送；用户也可以直接把路径发给你）。
 2. **先实地探查代码，不要凭空编**：读 README、工程清单（package.json / pyproject.toml / go.mod…）、入口与路由、数据模型、前端页面；只读，不要改文件。
 3. 归纳产品定位（2-3 句）与主要用户角色，再从**用户价值**出发推导故事；遵循 INVEST，**不写纯技术故事**（把"接入 Redis""重构模块"转成用户可感知的价值或并入某条 AC）。
-4. 用 `story_board_import` 一次落板，并带上产品代码关联：`productName` / `productKey` / `repoUrl` / `localPath` / `description` + `projectName`（常用"产品现状梳理"）+ `stories` 数组。
+4. 用 `story_board_import` 一次落板，并带上产品代码关联：`productName` / `productKey` / `repoUrl` / `localPath` / `description` + `projectName`（常用"产品现状梳理"）+ `boardName`（建一块板，配合 `defaultStatus:"backlog"` 让故事直接落在看板待办列，用户点项目就能看到看板）+ `stories` 数组。
 5. 用 3 行以内汇报：建了哪个产品/项目、多少条故事、有没有 WIP 提示；提示用户打开「用户故事看板」查看。
 6. 若产品已存在但没关联代码，导入时会**只回填空字段**，不会覆盖用户改过的 `repoUrl` / `localPath`。
 
