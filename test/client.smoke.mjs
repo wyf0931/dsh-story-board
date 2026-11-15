@@ -104,7 +104,17 @@ test('client panel mounts, switches tabs, and opens a story', { skip: skipReason
 		}
 		if (path.includes('api/story-board/pick-directory')) {
 			pickCalls += 1;
-			return new Response(JSON.stringify({ ok: true, value: { path: pickCalls === 1 ? '/Users/tester/code' : null } }), { headers: { 'content-type': 'application/json' } });
+			// 1st: product editor picks a path; 3rd: the import dialog picks its own.
+			const picked = pickCalls === 1 ? '/Users/tester/code' : pickCalls === 3 ? '/Users/tester/code/demo' : null;
+			return new Response(JSON.stringify({ ok: true, value: { path: picked } }), { headers: { 'content-type': 'application/json' } });
+		}
+		if (path.includes('api/story-board/compose-import')) {
+			const body = JSON.parse(options.body ?? '{}');
+			assert.equal(body.path, '/Users/tester/code/demo');
+			return new Response(JSON.stringify({
+				ok: true,
+				value: { prompt: '探查 ' + body.path + ' 并把用户故事落到看板', productName: 'dsh-story-board', productKey: 'DSHSTORYBOARD', path: body.path }
+			}), { headers: { 'content-type': 'application/json' } });
 		}
 		throw new Error(`unexpected fetch: ${path}`);
 	};
@@ -194,6 +204,43 @@ test('client panel mounts, switches tabs, and opens a story', { skip: skipReason
 	assert.equal(lastCommand?.action, 'update_product');
 	assert.equal(lastCommand?.repoUrl, 'https://github.com/wyf0931/dsh-story-board');
 	assert.equal(lastCommand?.localPath, '/Users/tester/code');
+
+	// Import-product dialog: compose a reverse-engineering prompt for a path.
+	const importButton = [...document.querySelectorAll('.sb-toolbar button')].find((button) => button.textContent.trim() === '导入产品');
+	assert.ok(importButton, 'import product button exists in the products toolbar');
+	importButton.click();
+	await new Promise((resolve) => setTimeout(resolve, 60));
+	assert.match(text(), /从已有项目导入产品/);
+	assert.match(text(), /本地项目路径/);
+	assert.match(text(), /生成提示词/);
+
+	const runButton = () => [...document.querySelectorAll('.sb-modal button')].find((button) => button.textContent.trim() === '在 DSH 中运行');
+	assert.ok(runButton(), 'run-in-DSH button exists');
+	assert.equal(runButton().disabled, true, 'run button is disabled before a prompt is composed');
+
+	const pickImportPath = [...document.querySelectorAll('.sb-modal button')].find((button) => button.textContent.trim() === '选择…');
+	assert.ok(pickImportPath, 'import dialog folder picker exists');
+	pickImportPath.click();
+	await new Promise((resolve) => setTimeout(resolve, 80));
+	const importPathInput = document.querySelector('.sb-modal input[placeholder="/Users/you/code/project"]');
+	assert.equal(importPathInput?.value, '/Users/tester/code/demo');
+	await new Promise((resolve) => setTimeout(resolve, 30));
+
+	const composeButton = [...document.querySelectorAll('.sb-modal button')].find((button) => button.textContent.trim() === '生成提示词');
+	assert.ok(composeButton, 'compose button exists');
+	composeButton.click();
+	await new Promise((resolve) => setTimeout(resolve, 80));
+
+	const promptArea = document.querySelector('.sb-modal textarea.sb-import-prompt');
+	assert.ok(promptArea, 'prompt textarea exists');
+	assert.match(promptArea.value, /探查 \/Users\/tester\/code\/demo/);
+	assert.equal(runButton().disabled, false, 'run button is enabled after composing');
+	assert.match(text(), /复制提示词/);
+
+	// Running without the session remote degrades to copy + close, not a crash.
+	runButton().click();
+	await new Promise((resolve) => setTimeout(resolve, 80));
+	assert.equal(document.querySelector('.sb-modal'), null, 'import dialog closed after run');
 
 	// Board tab: five status columns and the demo cards.
 	const boardTab = [...document.querySelectorAll('button')].find((button) => button.textContent.trim().startsWith('看板'));

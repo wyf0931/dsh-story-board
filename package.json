@@ -24,6 +24,7 @@
   "files": [
     "index.js",
     "store.js",
+    "prompt.js",
     "client.js",
     "cordis.patch.yml",
     "locale/*.json",
@@ -34,8 +35,8 @@
     "LICENSE"
   ],
   "scripts": {
-    "test": "node --test test/store.test.mjs test/host.test.mjs test/client.smoke.mjs",
-    "check": "node --check index.js && node --check store.js && node --check client.js && node --test test/store.test.mjs test/host.test.mjs test/client.smoke.mjs"
+    "test": "node --test test/store.test.mjs test/prompt.test.mjs test/host.test.mjs test/client.smoke.mjs",
+    "check": "node --check index.js && node --check store.js && node --check prompt.js && node --check client.js && node --test test/store.test.mjs test/prompt.test.mjs test/host.test.mjs test/client.smoke.mjs"
   },
   "dsh": {
     "bundle": {
