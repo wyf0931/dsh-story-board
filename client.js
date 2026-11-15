@@ -187,7 +187,7 @@ window.__ModuleLoader__.load({
 				'import.running': '正在运行…',
 				'import.copy': '复制提示词',
 				'import.copied': '已复制提示词。粘贴到 DSH 对话即可运行。',
-				'import.runDone': '已在新对话中运行，去看看板吧。',
+				'import.runDone': '已把提示词填入新的 DSH 对话框，确认后按 Enter 发送即可。',
 				'import.runFallback': '无法自动打开对话，已复制提示词；请粘贴到 DSH 对话运行。',
 				'import.needPath': '请先选择或输入本地项目路径',
 				'import.openBoard': '打开看板',
@@ -454,7 +454,7 @@ window.__ModuleLoader__.load({
 				'import.running': 'Running…',
 				'import.copy': 'Copy prompt',
 				'import.copied': 'Prompt copied. Paste it into a DSH conversation to run.',
-				'import.runDone': 'Running in a new conversation — open the board to see the result.',
+				'import.runDone': 'Prompt filled into a new DSH conversation — review it and press Enter to send.',
 				'import.runFallback': 'Could not open a conversation automatically; the prompt is copied — paste it into a DSH conversation.',
 				'import.needPath': 'Pick or type a local project path first',
 				'import.openBoard': 'Open board',
@@ -843,44 +843,32 @@ a.sb-code-row:hover{color:var(--dsw-alias-brand-primary)}
 
 		/**
 		 * Bridge to the DSH conversation runtime, wired in `apply` once `ctx` is
-		 * known. The panel runs a composed prompt by creating a fresh conversation
-		 * rooted at the picked project directory and submitting the prompt to it —
-		 * the same session primitives the GUI composer uses. Every step is guarded:
-		 * if the panel's context does not expose the session remote, the caller
-		 * falls back to copying the prompt for a manual paste.
+		 * known. The panel hands the composed prompt to a conversation through the
+		 * `uiWorkspace` client service — `startSession` opens the workspace's blank
+		 * conversation and, given `{ prompt }`, pre-fills its composer draft. That
+		 * is the same "New Session returns to the blank's unsent draft" path the
+		 * GUI uses, so the prompt lands in the input box ready to send with Enter;
+		 * it needs no session remote the panel does not carry.
+		 *
+		 * The caller degrades to copying the prompt only when even this service is
+		 * unavailable, so the flow always finishes.
 		 */
 		let dsh = null;
 		function makeDshBridge(ctx) {
-			const remote = () => ctx.remote ?? (typeof ctx.get === 'function' ? ctx.get('remote') : undefined);
 			const workspace = () => (typeof ctx.get === 'function' ? ctx.get('uiWorkspace') : undefined);
-			const timeZone = () => {
-				try { return Intl.DateTimeFormat().resolvedOptions().timeZone ?? ''; } catch { return ''; }
-			};
-			const randomId = () => {
-				try { return crypto.randomUUID(); } catch { return 'sb-' + String(Date.now()) + '-' + Math.random().toString(16).slice(2); }
-			};
 			return {
-				/** Create a conversation at `cwd` and submit `text`; resolve to its id. */
-				async runInDsh(text, cwd) {
-					const r = remote();
-					const create = r?.session?.create;
-					const prompt = r?.session?.prompt;
-					if (typeof create !== 'function' || typeof prompt !== 'function') throw new Error('remote_unavailable');
-					const payload = typeof cwd === 'string' && cwd.trim() !== '' ? { cwd: cwd.trim() } : {};
-					const created = await create(payload);
-					const sessionId = created?.value?.sessionId;
-					if (typeof sessionId !== 'string' || sessionId === '') throw new Error('session_create_failed');
-					await prompt({
-						requestId: randomId(),
-						sessionId,
-						mode: 'queue',
-						content: [{ type: 'text', text }],
-						clientTimeZone: timeZone()
-					});
-					// Switching the GUI to the new conversation is a courtesy; never fail
-					// the run just because navigation is unavailable.
-					try { workspace()?.openSession?.(sessionId); } catch { /* best effort */ }
-					return sessionId;
+				/**
+				 * Open a DSH conversation with `text` pre-filled in the composer, so
+				 * the user reviews it and presses Enter rather than copy-pasting.
+				 * Resolves true when the conversation was opened, false otherwise.
+				 */
+				async fillConversation(text) {
+					const service = workspace();
+					if (typeof service?.startSession !== 'function') return false;
+					// Absent workspaceId inherits the current/most-recent workspace, so
+					// the prompt opens in the conversation the user is already using.
+					service.startSession(undefined, { prompt: text, whenDraftExists: 'replace' });
+					return true;
 				},
 				/** Best-effort: open a fresh blank conversation for a manual paste. */
 				async openBlankConversation() {
@@ -2062,13 +2050,14 @@ a.sb-code-row:hover{color:var(--dsw-alias-brand-primary)}
 				setRunning(true);
 				setError('');
 				try {
-					if (dsh === null) throw new Error('remote_unavailable');
-					await dsh.runInDsh(prompt, localPath.trim());
+					if (dsh === null) throw new Error('uiWorkspace_unavailable');
+					const opened = await dsh.fillConversation(prompt);
+					if (opened !== true) throw new Error('uiWorkspace_unavailable');
 					notify(t('import.runDone'));
 					onDone?.();
 				} catch {
-					// Auto-run is a convenience; degrade to copy + open a blank
-					// conversation so the flow still finishes without the session remote.
+					// Auto-fill is a convenience; degrade to copy + open a blank
+					// conversation so the flow still finishes without the service.
 					let copied = false;
 					try {
 						await navigator.clipboard.writeText(prompt);

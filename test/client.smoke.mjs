@@ -92,6 +92,14 @@ test('client panel mounts, switches tabs, and opens a story', { skip: skipReason
 
 	let lastCommand = null;
 	let pickCalls = 0;
+	let startedConversation = null;
+	// The panel fills the composer through the `uiWorkspace` client service; stub
+	// it so the smoke test can assert the composed prompt actually lands there.
+	const uiWorkspaceStub = {
+		startSession(workspaceId, options) {
+			startedConversation = { workspaceId, prompt: options?.prompt ?? '' };
+		}
+	};
 	window.fetch = async (url, options) => {
 		const path = String(url);
 		if (path.includes('api/story-board/state')) {
@@ -124,6 +132,9 @@ test('client panel mounts, switches tabs, and opens a story', { skip: skipReason
 	assert.ok(plugin, 'client module registered a factory');
 
 	plugin.apply({
+		get(name) {
+			return name === 'uiWorkspace' ? uiWorkspaceStub : undefined;
+		},
 		effect(fn) {
 			const dispose = fn();
 			registered.push(dispose);
@@ -237,9 +248,11 @@ test('client panel mounts, switches tabs, and opens a story', { skip: skipReason
 	assert.equal(runButton().disabled, false, 'run button is enabled after composing');
 	assert.match(text(), /复制提示词/);
 
-	// Running without the session remote degrades to copy + close, not a crash.
+	// Running hands the prompt to a DSH conversation through uiWorkspace.startSession.
 	runButton().click();
 	await new Promise((resolve) => setTimeout(resolve, 80));
+	assert.match(startedConversation?.prompt ?? '', /探查 \/Users\/tester\/code\/demo/);
+	assert.equal(startedConversation?.workspaceId, undefined, 'opens in the current workspace');
 	assert.equal(document.querySelector('.sb-modal'), null, 'import dialog closed after run');
 
 	// Board tab: five status columns and the demo cards.
