@@ -949,8 +949,14 @@ function importStories(state, body, { clock, at }) {
 	let board;
 	if (body.boardId !== undefined && body.boardId !== null && body.boardId !== '') {
 		board = boardInProject(state, body.boardId, project.id);
-	} else if (body.boardName !== undefined && textOf(body.boardName, 80) !== '') {
-		const boardName = textOf(body.boardName, 80);
+	} else {
+		// A project import must always land on a real board so the user can click
+		// the project and see a kanban. When the caller omits `boardName`, derive
+		// one from the project name (falling back to a generic label) instead of
+		// silently dumping every story into the un-boarded backlog.
+		const boardName = textOf(body.boardName, 80) !== ''
+			? textOf(body.boardName, 80)
+			: (project.name !== '' ? project.name : '产品现状梳理');
 		board = state.boards.find((entry) => entry.projectId === project.id && entry.name === boardName);
 		if (board === undefined) {
 			board = {

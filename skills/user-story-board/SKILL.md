@@ -145,7 +145,7 @@ DoD 示例（回答用户时可以引用）：代码提交并 CR 通过、自测
    - **`epic` 用「端 · 功能域」**（如「用户端 · 账号」「运营端 · 内容管理」），这样看板按 Epic 泳道分组时不同端天然分开，不会混成一列；
    - **`tags` 带上端名**（如「用户端」「运营端」）再加功能标签；
    - 遵循 INVEST，**不写纯技术故事**（把"接入 Redis""重构模块"转成用户可感知的价值或并入某条 AC）。
-4. 用 `story_board_import` 落板，并带上产品代码关联：`productName` / `productKey` / `repoUrl` / `localPath` / `description` + `projectName`（常用"产品现状梳理"）+ `boardName`（建一块板，配合 `defaultStatus:"backlog"` 让故事直接落在看板待办列，用户点项目就能看到看板）+ `stories` 数组。**默认所有端放同一块板**，靠 epic 泳道区分；**仅当某个端是真正独立的产品面、且它的故事较多（≥ 6 条）时**，才再调一次 import 为它单开一块板（`boardName` 按该端命名，只把该端的故事放进这次调用），避免看板碎片化。
+4. 用 `story_board_import` 落板，并带上产品代码关联：`productName` / `productKey` / `repoUrl` / `localPath` / `description` + `projectName`（常用"产品现状梳理"）+ `stories` 数组。**插件现在保证导入一定有一块看板**：即使你不传 `boardName`，也会用项目名默认建一块板，故事直接落在看板（默认 `todo` 列），用户点项目就能看到看板。建议仍显式传 `boardName` + `defaultStatus:"backlog"`（让故事先落待办列）。**默认所有端放同一块板**，靠 epic 泳道区分；**仅当某个端是真正独立的产品面、且它的故事较多（≥ 6 条）时**，才再调一次 import 为它单开一块板（`boardName` 按该端命名，只把该端的故事放进这次调用），避免看板碎片化。
 5. 用 3 行以内汇报：建了哪个产品/项目、多少条故事、有没有 WIP 提示；提示用户打开「用户故事看板」查看。
 6. 若产品已存在但没关联代码，导入时会**只回填空字段**，不会覆盖用户改过的 `repoUrl` / `localPath`。
 

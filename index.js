@@ -107,7 +107,7 @@ Target (the hierarchy is created on demand when names are given):
 - productId | productKey | productName
 - project fields, plus product metadata applied when the product is created or backfilled (repoUrl, localPath, description, color). localPath/repoUrl link the product to the checkout it came from; on an existing product only empty fields are filled.
 - projectId | projectKey | projectName
-- boardId | boardName (a board is created only when boardName is given; otherwise stories go to the project backlog)
+- boardId | boardName (a board is always ensured: pass boardName to name it, otherwise it defaults to the project name so the import never lands board-less)
 
 Behavior:
 - Idempotent: an existing story in the same project with the same key or the same title is updated, not duplicated. Re-import after refining the document is safe.

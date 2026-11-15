@@ -280,6 +280,23 @@ test('reverse-engineering import links the product to the checkout and backfills
 	assert.equal(state.products.find((entry) => entry.id === created.id).localPath, '/Users/tester/code/dsh-story-board');
 });
 
+test('project import without a boardName still creates a board (never board-less)', () => {
+	const state = fresh();
+	const result = mutate(state, 'import_stories', {
+		productName: 'gendu',
+		productKey: 'GENDU',
+		projectName: '产品现状梳理',
+		// No boardName on purpose — the model dropped the optional field.
+		stories: [{ title: '浏览跟读资源', asA: '学员', iWant: '浏览资源', soThat: '找到课', acceptanceCriteria: ['…'] }]
+	}, { clock: clockOf });
+	assert.equal(result.ok, true);
+	// A board is derived from the project name so clicking the project opens a kanban.
+	assert.equal(state.boards.length, 1);
+	assert.equal(state.boards[0].name, '产品现状梳理');
+	// The imported story lands on that board instead of the un-boarded backlog.
+	assert.equal(state.stories[0].boardId, state.boards[0].id);
+});
+
 test('deleting a product cascades to projects, boards, and stories', () => {
 	const state = fresh();
 	const createdProduct = product(state).value.product;
