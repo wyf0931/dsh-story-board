@@ -1088,6 +1088,7 @@ a.sb-code-row:hover{color:var(--dsw-alias-brand-primary)}
 			if (typeof document === 'undefined') return null;
 			return ReactDOM.createPortal(h('div', {
 				className: 'sb-overlay',
+				'data-window-drag-exclude': '',
 				onMouseDown: (event) => {
 					if (event.target === event.currentTarget) onClose();
 				}
@@ -1120,8 +1121,8 @@ a.sb-code-row:hover{color:var(--dsw-alias-brand-primary)}
 			}, [onClose]);
 			if (typeof document === 'undefined') return null;
 			return ReactDOM.createPortal(h(React.Fragment, null,
-				h('div', { className: 'sb-drawer-overlay', onMouseDown: onClose }),
-				h('aside', { ref: drawerRef, className: 'sb-drawer', role: 'dialog', 'aria-modal': 'true', 'aria-label': title },
+				h('div', { className: 'sb-drawer-overlay', 'data-window-drag-exclude': '', onMouseDown: onClose }),
+				h('aside', { ref: drawerRef, className: 'sb-drawer', 'data-window-drag-exclude': '', role: 'dialog', 'aria-modal': 'true', 'aria-label': title },
 					h('div', { className: 'sb-drawer-head' },
 						h('div', { style: { flex: 1, minWidth: 0 } },
 							h('h2', { className: 'sb-drawer-title' }, title),
